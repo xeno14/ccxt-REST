@@ -1,0 +1,4 @@
+ccxt
+requests
+flask-restplus
+jinja2

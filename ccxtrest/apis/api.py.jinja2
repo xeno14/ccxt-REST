@@ -1,0 +1,28 @@
+from ccxtrest.apis import api
+from ccxtrest._core.models import get_model
+from ccxtrest._core.exchange import get_exchange
+
+from flask import Flask, request
+from flask_restplus import Resource, Api, fields
+
+
+namespace = api.namespace("{{ exchange_name }}", description="{{ exchange_name }}")
+api.add_namespace(namespace)
+
+{% for method in methods %}
+model_{{ method }} = namespace.model("{{ method }}", get_model("{{ method }}"))
+{%- endfor %}
+{%- for method in methods %}
+
+
+@namespace.route("/{{ method }}", methods=["post"])
+class {{ method }}(Resource):
+
+     @namespace.expect(model_{{ method }})
+     def post(self):
+        exchange = get_exchange("{{ exchange_name }}")
+        data = request.json
+        result = exchange.{{ method }}(**data)
+        return result
+{%- endfor %}
+
